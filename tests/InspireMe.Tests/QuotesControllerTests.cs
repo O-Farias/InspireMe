@@ -90,5 +90,95 @@ namespace InspireMe.Tests.Controllers
             Assert.Equal(201, result.StatusCode);
             Assert.Equal(addedQuote, result.Value);
         }
+
+        [Fact]
+        public void GetByAuthor_ShouldReturnQuotesForAuthor()
+        {
+            // Arrange
+            var mockQuotes = new List<Quote>
+            {
+                new Quote { Id = 1, Text = "Frase 1", Author = "Autor Teste" },
+                new Quote { Id = 2, Text = "Frase 2", Author = "Autor Teste" }
+            };
+
+            _mockQuotesService.Setup(s => s.GetQuotesByAuthor("Autor Teste")).Returns(mockQuotes);
+
+            // Act
+            var result = _controller.GetByAuthor("Autor Teste") as OkObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(200, result.StatusCode);
+            Assert.Equal(mockQuotes, result.Value);
+        }
+
+        [Fact]
+        public void GetByAuthor_ShouldReturnNotFound_WhenNoQuotesExistForAuthor()
+        {
+            // Arrange
+            _mockQuotesService.Setup(s => s.GetQuotesByAuthor(It.IsAny<string>())).Returns(new List<Quote>());
+
+            // Act
+            var result = _controller.GetByAuthor("Autor Desconhecido");
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void Update_ShouldReturnNoContent_WhenQuoteIsUpdated()
+        {
+            // Arrange
+            var updatedQuote = new Quote { Text = "Frase Atualizada", Author = "Autor Atualizado" };
+
+            _mockQuotesService.Setup(s => s.UpdateQuote(1, updatedQuote)).Returns(true);
+
+            // Act
+            var result = _controller.Update(1, updatedQuote);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public void Update_ShouldReturnNotFound_WhenQuoteDoesNotExist()
+        {
+            // Arrange
+            var updatedQuote = new Quote { Text = "Frase Atualizada", Author = "Autor Atualizado" };
+
+            _mockQuotesService.Setup(s => s.UpdateQuote(99, updatedQuote)).Returns(false);
+
+            // Act
+            var result = _controller.Update(99, updatedQuote);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+        [Fact]
+        public void Delete_ShouldReturnNoContent_WhenQuoteIsDeleted()
+        {
+            // Arrange
+            _mockQuotesService.Setup(s => s.DeleteQuote(1)).Returns(true);
+
+            // Act
+            var result = _controller.Delete(1);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public void Delete_ShouldReturnNotFound_WhenQuoteDoesNotExist()
+        {
+            // Arrange
+            _mockQuotesService.Setup(s => s.DeleteQuote(99)).Returns(false);
+
+            // Act
+            var result = _controller.Delete(99);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
     }
 }
