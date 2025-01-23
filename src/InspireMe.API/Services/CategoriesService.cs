@@ -12,7 +12,7 @@ public class CategoriesService : ICategoriesService
         return Task.FromResult(_categories.AsEnumerable());
     }
 
-    public Task<Category> GetCategoryByIdAsync(int id)
+    public Task<Category?> GetCategoryByIdAsync(int id)
     {
         return Task.FromResult(_categories.FirstOrDefault(c => c.Id == id));
     }
@@ -24,7 +24,7 @@ public class CategoriesService : ICategoriesService
         return Task.FromResult(category);
     }
 
-    public Task<Category> UpdateCategoryAsync(int id, Category category)
+    public Task<Category?> UpdateCategoryAsync(int id, Category category)
     {
         var existingCategory = _categories.FirstOrDefault(c => c.Id == id);
         if (existingCategory != null)
