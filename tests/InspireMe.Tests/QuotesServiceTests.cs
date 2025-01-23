@@ -64,5 +64,87 @@ namespace InspireMe.Tests.Services
             Assert.Equal(6, addedQuote.Id); // Deve ser o próximo ID (6)
             Assert.Equal("A persistência é o caminho do êxito.", addedQuote.Text);
         }
+
+        [Fact]
+        public void GetQuotesByAuthor_ShouldReturnQuotesForAuthor()
+        {
+            // Act
+            var quotes = _quotesService.GetQuotesByAuthor("John Lennon");
+
+            // Assert
+            Assert.NotNull(quotes);
+            Assert.Single(quotes); // John Lennon tem 1 frase no mock inicial
+            Assert.Equal("John Lennon", quotes.First().Author);
+        }
+
+        [Fact]
+        public void GetQuotesByAuthor_ShouldReturnEmptyList_WhenAuthorDoesNotExist()
+        {
+            // Act
+            var quotes = _quotesService.GetQuotesByAuthor("Autor Inexistente");
+
+            // Assert
+            Assert.NotNull(quotes);
+            Assert.Empty(quotes);
+        }
+
+        [Fact]
+        public void UpdateQuote_ShouldUpdateExistingQuote()
+        {
+            // Arrange
+            var updatedQuote = new Quote
+            {
+                Text = "Texto Atualizado",
+                Author = "Autor Atualizado"
+            };
+
+            // Act
+            var result = _quotesService.UpdateQuote(1, updatedQuote);
+
+            // Assert
+            Assert.True(result);
+            var quote = _quotesService.GetQuoteById(1);
+            Assert.NotNull(quote);
+            Assert.Equal("Texto Atualizado", quote.Text);
+            Assert.Equal("Autor Atualizado", quote.Author);
+        }
+
+        [Fact]
+        public void UpdateQuote_ShouldReturnFalse_WhenQuoteDoesNotExist()
+        {
+            // Arrange
+            var updatedQuote = new Quote
+            {
+                Text = "Texto Atualizado",
+                Author = "Autor Atualizado"
+            };
+
+            // Act
+            var result = _quotesService.UpdateQuote(99, updatedQuote);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void DeleteQuote_ShouldRemoveExistingQuote()
+        {
+            // Act
+            var result = _quotesService.DeleteQuote(1);
+
+            // Assert
+            Assert.True(result);
+            Assert.Null(_quotesService.GetQuoteById(1)); // Confirma que foi removido
+        }
+
+        [Fact]
+        public void DeleteQuote_ShouldReturnFalse_WhenQuoteDoesNotExist()
+        {
+            // Act
+            var result = _quotesService.DeleteQuote(99);
+
+            // Assert
+            Assert.False(result);
+        }
     }
 }
