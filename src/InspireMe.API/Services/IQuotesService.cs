@@ -1,5 +1,5 @@
-using InspireMe.API.Models; 
-using System.Collections.Generic; 
+using InspireMe.API.Models;
+using System.Collections.Generic;
 
 namespace InspireMe.API.Services
 {
@@ -7,6 +7,9 @@ namespace InspireMe.API.Services
     {
         IEnumerable<Quote> GetAllQuotes();
         Quote? GetQuoteById(int id);
+        IEnumerable<Quote> GetQuotesByAuthor(string author);
         Quote AddQuote(Quote newQuote);
+        bool UpdateQuote(int id, Quote updatedQuote);
+        bool DeleteQuote(int id);
     }
 }
