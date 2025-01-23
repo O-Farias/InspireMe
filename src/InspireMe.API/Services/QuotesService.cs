@@ -8,7 +8,6 @@ namespace InspireMe.API.Services
 
         public QuotesService()
         {
-            // Inicializa com algumas frases padrão
             _quotes = new List<Quote>
             {
                 new Quote { Id = 1, Text = "O melhor jeito de prever o futuro é criá-lo.", Author = "Peter Drucker" },
@@ -19,24 +18,37 @@ namespace InspireMe.API.Services
             };
         }
 
-        // Retorna todas as frases
-        public IEnumerable<Quote> GetAllQuotes()
-        {
-            return _quotes;
-        }
+        public IEnumerable<Quote> GetAllQuotes() => _quotes;
 
-        // Retorna uma frase específica pelo ID
-        public Quote? GetQuoteById(int id)
-        {
-            return _quotes.FirstOrDefault(q => q.Id == id);
-        }
+        public Quote? GetQuoteById(int id) => _quotes.FirstOrDefault(q => q.Id == id);
 
-        // Adiciona uma nova frase
+        public IEnumerable<Quote> GetQuotesByAuthor(string author) =>
+            _quotes.Where(q => q.Author.Equals(author, StringComparison.OrdinalIgnoreCase));
+
         public Quote AddQuote(Quote newQuote)
         {
-            newQuote.Id = _quotes.Count + 1; // Gera um ID simples
+            newQuote.Id = _quotes.Count + 1;
             _quotes.Add(newQuote);
             return newQuote;
+        }
+
+        public bool UpdateQuote(int id, Quote updatedQuote)
+        {
+            var existingQuote = GetQuoteById(id);
+            if (existingQuote == null) return false;
+
+            existingQuote.Text = updatedQuote.Text;
+            existingQuote.Author = updatedQuote.Author;
+            return true;
+        }
+
+        public bool DeleteQuote(int id)
+        {
+            var quote = GetQuoteById(id);
+            if (quote == null) return false;
+
+            _quotes.Remove(quote);
+            return true;
         }
     }
 }
