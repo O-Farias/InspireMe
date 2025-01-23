@@ -23,7 +23,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Category>> GetCategory(int id)
+    public async Task<ActionResult<Category?>> GetCategory(int id)
     {
         var category = await _categoriesService.GetCategoryByIdAsync(id);
         if (category == null)
